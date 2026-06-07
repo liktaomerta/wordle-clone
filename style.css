@@ -1,0 +1,36 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.box {
+  padding: 15px;
+  border: 2px solid black;
+  margin: 5px;
+}
+
+.boxes {
+  display: flex;
+  flex-direction: column;
+}
+
+.first-row,
+.second-row,
+.third-row,
+.forth-row,
+.fifth-row,
+.sixth-row {
+  display: flex;
+  justify-content: center;
+}
