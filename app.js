@@ -7,6 +7,7 @@ function isLetter(letter) {
 
 function fillBoxes() {
   document.addEventListener("keydown", (event) => {
+    let pressedLetter = event.key;
     if (currentRow > 6) return;
 
     const rowClasses = [
@@ -19,11 +20,12 @@ function fillBoxes() {
       "sixth",
     ];
 
+    let isRowFull;
     const currentRowClass = `.${rowClasses[currentRow]}-row .box`;
-    currentBoxes = document.querySelectorAll(currentRowClass);
+    const currentBoxes = document.querySelectorAll(currentRowClass);
 
-    if (isLetter(event.key)) {
-      const pressedLetter = event.key.toUpperCase();
+    if (isLetter(pressedLetter)) {
+      pressedLetter = pressedLetter.toUpperCase();
 
       for (let i = 0; i < rowLength; i++) {
         if (currentBoxes[i].textContent === "") {
@@ -34,10 +36,19 @@ function fillBoxes() {
     }
 
     if (event.key === "Enter") {
-      let isRowFull = true;
+      isRowFull = true;
       for (let i = 0; i < rowLength; i++) {
-        if (currentBoxes[i] === "") {
+        if (currentBoxes[i].textContent === "") {
           isRowFull = false;
+        }
+      }
+    }
+
+    if (event.key === "Backspace") {
+      for (let i = rowLength - 1; i >= 0; i--) {
+        if (currentBoxes[i].textContent !== "") {
+          currentBoxes[i].textContent = "";
+          return;
         }
       }
     }
@@ -48,4 +59,8 @@ function fillBoxes() {
   });
 }
 
-fillBoxes();
+function init() {
+  fillBoxes();
+}
+
+init();
