@@ -90,7 +90,6 @@ function checkRow(writtenWord, wordOfTheDay) {
 
 async function init() {
   await getWord();
-
   fillBoxes();
 }
 
