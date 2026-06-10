@@ -3,8 +3,6 @@ const wordOfTheDaySource = "https://words.dev-apis.com/word-of-the-day";
 let wordOfTheDayString;
 const awaitingResponseIcon = "😵‍💫";
 
-
-
 async function validateWord(word) {
   const VALIDATE_URL = "https://words.dev-apis.com/validate-word";
 
@@ -34,6 +32,7 @@ async function validateWord(word) {
 }
 
 async function submitWord(word, currentBoxes) {
+  document.querySelector(".awaiting-response").style.display = "flex";
   const isValid = await validateWord(word);
 
   if (isValid) {
@@ -45,6 +44,7 @@ async function submitWord(word, currentBoxes) {
       currentBoxes[i].textContent = "";
     }
   }
+  document.querySelector(".awaiting-response").style.display = "none";
 }
 
 async function getWord() {
