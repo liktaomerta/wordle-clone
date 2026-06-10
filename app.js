@@ -62,10 +62,7 @@ function isLetter(letter) {
 }
 
 function fillBoxes() {
-  const gameInput = document.getElementById("gameInput");
-  gameInput.focus();
-
-  gameInput.addEventListener("keydown", (event) => {
+  document.addEventListener("keydown", (event) => {
     let pressedLetter = event.key;
     if (currentRow > 6) return;
 
@@ -82,70 +79,50 @@ function fillBoxes() {
     const currentRowClass = `.${rowClasses[currentRow]}-row .box`;
     const currentBoxes = document.querySelectorAll(currentRowClass);
 
-    gameInput.value = "";
-    gameInput.focus();
+    if (isLetter(pressedLetter)) {
+      pressedLetter = pressedLetter.toUpperCase();
+
+      for (let i = 0; i < rowLength; i++) {
+        if (currentBoxes[i].textContent === "") {
+          currentBoxes[i].textContent = pressedLetter;
+          return;
+        }
+      }
+    }
+
+    if (event.key === "Enter") {
+      let isRowFull = true;
+      for (let i = 0; i < rowLength; i++) {
+        if (currentBoxes[i].textContent === "") {
+          isRowFull = false;
+        }
+      }
+
+      if (isRowFull) {
+        const guessIndex = currentRow - 1;
+
+        wordGuesses[guessIndex] = "";
+
+        for (i = 0; i < currentBoxes.length; i++) {
+          wordGuesses[guessIndex] += currentBoxes[i].textContent;
+        }
+
+        submitWord(wordGuesses[guessIndex], currentBoxes);
+      } else {
+        alert("Please enter a five letter word");
+      }
+    }
+
+    if (event.key === "Backspace") {
+      for (let i = rowLength - 1; i >= 0; i--) {
+        if (currentBoxes[i].textContent !== "") {
+          currentBoxes[i].textContent = "";
+          return;
+        }
+      }
+    }
   });
 }
-document.addEventListener("keydown", (event) => {
-  let pressedLetter = event.key;
-  if (currentRow > 6) return;
-
-  const rowClasses = [
-    "",
-    "first",
-    "second",
-    "third",
-    "forth",
-    "fifth",
-    "sixth",
-  ];
-
-  const currentRowClass = `.${rowClasses[currentRow]}-row .box`;
-  const currentBoxes = document.querySelectorAll(currentRowClass);
-
-  if (isLetter(pressedLetter)) {
-    pressedLetter = pressedLetter.toUpperCase();
-
-    for (let i = 0; i < rowLength; i++) {
-      if (currentBoxes[i].textContent === "") {
-        currentBoxes[i].textContent = pressedLetter;
-        return;
-      }
-    }
-  }
-
-  if (event.key === "Enter") {
-    let isRowFull = true;
-    for (let i = 0; i < rowLength; i++) {
-      if (currentBoxes[i].textContent === "") {
-        isRowFull = false;
-      }
-    }
-
-    if (isRowFull) {
-      const guessIndex = currentRow - 1;
-
-      wordGuesses[guessIndex] = "";
-
-      for (i = 0; i < currentBoxes.length; i++) {
-        wordGuesses[guessIndex] += currentBoxes[i].textContent;
-      }
-
-      submitWord(wordGuesses[guessIndex], currentBoxes);
-    } else {
-      alert("Please enter a five letter word");
-    }
-  }
-
-  if (event.key === "Backspace") {
-    for (let i = rowLength - 1; i >= 0; i--) {
-      if (currentBoxes[i].textContent !== "") {
-        currentBoxes[i].textContent = "";
-        return;
-      }
-    }
-  }
-});
 
 function checkRow(writtenWord, wordOfTheDay, currentBoxes) {
   for (let i = 0; i < rowLength; i++) {
