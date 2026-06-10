@@ -105,3 +105,21 @@ body {
   animation: none;
   font-size: 24px;
 }
+
+.box.correct {
+  background-color: #6aaa64;
+  color: white;
+  border-color: #6aaa64;
+}
+
+.box.present {
+  background-color: #c8b458;
+  color: white;
+  border-color: #c8b458;
+}
+
+.box.absent {
+  background-color: #787c7e;
+  color: white;
+  border-color: #e7eaeb;
+}

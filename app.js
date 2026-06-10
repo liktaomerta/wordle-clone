@@ -2,6 +2,7 @@ let wordGuesses = ["", "", "", "", "", ""];
 const wordOfTheDaySource = "https://words.dev-apis.com/word-of-the-day";
 let wordOfTheDayString;
 const awaitingResponseIcon = "😵‍💫";
+const awaitingResponseSelector = document.querySelector(".awaiting-response");
 
 async function validateWord(word) {
   const VALIDATE_URL = "https://words.dev-apis.com/validate-word";
@@ -32,11 +33,11 @@ async function validateWord(word) {
 }
 
 async function submitWord(word, currentBoxes) {
-  document.querySelector(".awaiting-response").style.display = "flex";
+  awaitingResponseSelector.style.display = "flex";
   const isValid = await validateWord(word);
 
   if (isValid) {
-    checkRow(word, wordOfTheDayString);
+    checkRow(word, wordOfTheDayString, currentBoxes);
     currentRow++;
   } else {
     alert("Not a valid word!");
@@ -44,7 +45,7 @@ async function submitWord(word, currentBoxes) {
       currentBoxes[i].textContent = "";
     }
   }
-  document.querySelector(".awaiting-response").style.display = "none";
+  awaitingResponseSelector.style.display = "none";
 }
 
 async function getWord() {
@@ -123,7 +124,20 @@ function fillBoxes() {
   });
 }
 
-function checkRow(writtenWord, wordOfTheDay) {
+function checkRow(writtenWord, wordOfTheDay, currentBoxes) {
+  for (let i = 0; i < rowLength; i++) {
+    if (writtenWord[i] === wordOfTheDay[i]) {
+      currentBoxes[i].classList.add("correct");
+    } else if (
+      writtenWord[i] !== wordOfTheDay[i] &&
+      wordOfTheDay.includes(writtenWord[i])
+    ) {
+      currentBoxes[i].classList.add("present");
+    } else {
+      currentBoxes[i].classList.add("absent");
+    }
+  }
+
   if (writtenWord === wordOfTheDay) {
     alert("You win!");
   } else {
