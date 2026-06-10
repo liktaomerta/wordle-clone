@@ -3,6 +3,45 @@ let wordGuesses = ["", "", "", "", "", ""];
 const wordOfTheDaySource = "https://words.dev-apis.com/word-of-the-day";
 let wordOfTheDayString;
 
+async function validateWord(word) {
+  const VALIDATE_URL = "https://words.dev-apis.com/validate-word";
+
+  const wordGuess = {
+    word: word.toLowerCase(),
+  };
+
+  try {
+    const response = await fetch(VALIDATE_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(wordGuess),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP Error! Status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+
+    return responseData.validWord;
+  } catch (error) {
+    alert(`Error: `, error);
+  }
+}
+
+async function submitWord(word, currentBoxes) {
+  const isValid = await validateWord(word);
+
+  if (isValid) {
+    checkRow(word, wordOfTheDayString);
+    currentRow++;
+  } else {
+    alert("Not a valid word!");
+  }
+}
+
 async function getWord() {
   const promise = await fetch(wordOfTheDaySource);
   const processedResponse = await promise.json();
@@ -62,10 +101,9 @@ function fillBoxes() {
           wordGuesses[guessIndex] += currentBoxes[i].textContent;
         }
 
-        checkRow(wordGuesses[guessIndex], wordOfTheDayString);
-        currentRow++;
+        submitWord(wordGuesses[guessIndex], currentBoxes);
       } else {
-        alert("Not enough letters!");
+        alert("Please enter a five letter word");
       }
     }
 
