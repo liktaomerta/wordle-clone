@@ -41,8 +41,8 @@ body {
 }
 
 .box {
-  padding: 30px;
-  border: 2px solid black;
+  padding: 20px;
+  border: 2px solid rgb(156, 156, 156);
   margin: 5px;
   background-color: white;
   font-size: 20px;
@@ -62,4 +62,30 @@ body {
 .sixth-row {
   display: flex;
   justify-content: center;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.awaiting-response {
+  display: none;
+  align-items: center;
+  gap: 10%;
+}
+
+.emoji {
+  font-size: 32px;
+  animation: spin 4s linear infinite;
+  transform-origin: center;
+}
+
+.no-move {
+  animation: none;
+  font-size: 24px;
 }

@@ -1,7 +1,9 @@
 let wordGuesses = ["", "", "", "", "", ""];
-
 const wordOfTheDaySource = "https://words.dev-apis.com/word-of-the-day";
 let wordOfTheDayString;
+const awaitingResponseIcon = "😵‍💫";
+
+
 
 async function validateWord(word) {
   const VALIDATE_URL = "https://words.dev-apis.com/validate-word";
@@ -39,6 +41,9 @@ async function submitWord(word, currentBoxes) {
     currentRow++;
   } else {
     alert("Not a valid word!");
+    for (let i = 0; i < currentBoxes.length; i++) {
+      currentBoxes[i].textContent = "";
+    }
   }
 }
 
