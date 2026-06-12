@@ -140,6 +140,8 @@ function checkRow(writtenWord, wordOfTheDay, currentBoxes) {
 
   if (writtenWord === wordOfTheDay) {
     alert("You win!");
+  } else if (writtenWord !== wordOfTheDay && currentRow === 6) {
+    alert(`You lost... The word was ${wordOfTheDay}`);
   } else {
     alert("Keep trying...");
   }
