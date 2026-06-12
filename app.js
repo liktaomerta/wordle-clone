@@ -4,6 +4,34 @@ let wordOfTheDayString;
 const awaitingResponseIcon = "😵‍💫";
 const awaitingResponseSelector = document.querySelector(".awaiting-response");
 
+const rowLength = 5;
+let currentRow = 1;
+
+const rowClasses = ["", "first", "second", "third", "forth", "fifth", "sixth"];
+
+let currentInputMethod = null;
+
+function setupInputBasedOnScreenSize() {
+  if (window.innerWidth < 768) {
+    // Mobile: use button clicks
+    if (currentInputMethod !== "buttons") {
+      currentInputMethod = "buttons";
+      fillBoxesWithButtons();
+    }
+  } else {
+    // Desktop: use keyboard
+    if (currentInputMethod !== "keyboard") {
+      currentInputMethod = "keyboard";
+      fillBoxes();
+    }
+  }
+}
+
+function getCurrentBoxes() {
+  const rowClass = `.${rowClasses[currentRow]}-row .box`;
+  return document.querySelectorAll(rowClass);
+}
+
 async function validateWord(word) {
   const VALIDATE_URL = "https://words.dev-apis.com/validate-word";
 
@@ -54,30 +82,70 @@ async function getWord() {
   wordOfTheDayString = processedResponse.word.toUpperCase();
 }
 
-const rowLength = 5;
-let currentRow = 1;
-
 function isLetter(letter) {
   return /^[a-zA-Z]$/.test(letter);
 }
 
-function fillBoxes() {
-  document.addEventListener("keydown", (event) => {
-    let pressedLetter = event.key;
+function fillBoxesWithButtons() {
+  document.addEventListener("click", (event) => {
     if (currentRow > 6) return;
 
-    const rowClasses = [
-      "",
-      "first",
-      "second",
-      "third",
-      "forth",
-      "fifth",
-      "sixth",
-    ];
+    const button = event.target;
+    if (!button.classList.contains("btn")) return;
 
-    const currentRowClass = `.${rowClasses[currentRow]}-row .box`;
-    const currentBoxes = document.querySelectorAll(currentRowClass);
+    const currentBoxes = getCurrentBoxes();
+    const letter = button.innerText;
+
+    // ✅ Handle regular letter buttons
+    if (letter !== "ENTER" && letter !== "BACK") {
+      for (let i = 0; i < rowLength; i++) {
+        if (currentBoxes[i].textContent === "") {
+          currentBoxes[i].textContent = letter;
+          return;
+        }
+      }
+    }
+
+    if (letter === "ENTER") {
+      let isRowFull = true;
+      for (let i = 0; i < rowLength; i++) {
+        if (currentBoxes[i].textContent === "") {
+          isRowFull = false;
+          break;
+        }
+      }
+
+      if (isRowFull) {
+        const guessIndex = currentRow - 1;
+        let guess = "";
+
+        for (let i = 0; i < currentBoxes.length; i++) {
+          guess += currentBoxes[i].textContent;
+        }
+
+        submitWord(guess, currentBoxes);
+      } else {
+        alert("Please enter a five letter word");
+      }
+    }
+
+    if (letter === "BACK") {
+      for (let i = rowLength - 1; i >= 0; i--) {
+        if (currentBoxes[i].textContent !== "") {
+          currentBoxes[i].textContent = "";
+          return;
+        }
+      }
+    }
+  });
+}
+
+function fillBoxes() {
+  document.addEventListener("keydown", (event) => {
+    if (currentRow > 6) return;
+
+    const currentBoxes = getCurrentBoxes();
+    let pressedLetter = event.key;
 
     if (isLetter(pressedLetter)) {
       pressedLetter = pressedLetter.toUpperCase();
@@ -95,19 +163,19 @@ function fillBoxes() {
       for (let i = 0; i < rowLength; i++) {
         if (currentBoxes[i].textContent === "") {
           isRowFull = false;
+          break;
         }
       }
 
       if (isRowFull) {
         const guessIndex = currentRow - 1;
+        let guess = "";
 
-        wordGuesses[guessIndex] = "";
-
-        for (i = 0; i < currentBoxes.length; i++) {
-          wordGuesses[guessIndex] += currentBoxes[i].textContent;
+        for (let i = 0; i < currentBoxes.length; i++) {
+          guess += currentBoxes[i].textContent;
         }
 
-        submitWord(wordGuesses[guessIndex], currentBoxes);
+        submitWord(guess, currentBoxes);
       } else {
         alert("Please enter a five letter word");
       }
@@ -149,7 +217,8 @@ function checkRow(writtenWord, wordOfTheDay, currentBoxes) {
 
 async function init() {
   await getWord();
-  fillBoxes();
+  setupInputBasedOnScreenSize();
+  window.addEventListener("resize", setupInputBasedOnScreenSize);
 }
 
 init();
